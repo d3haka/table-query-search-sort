@@ -1,13 +1,26 @@
 import { type Dispatch, type SetStateAction, type FC } from "react";
+import type { SetURLSearchParams } from "react-router";
 
 interface PaginationProps {
   page: number;
   pageCount: number;
   setPage: Dispatch<SetStateAction<number>>;
+  searchParams: URLSearchParams;
+  setSearchParams: SetURLSearchParams;
 }
 
-export const Pagination: FC<PaginationProps> = ({ page, pageCount, setPage }) => {
-  const handlePageChange = (pageNumber: number) => setPage(pageNumber);
+export const Pagination: FC<PaginationProps> = ({
+  page,
+  pageCount,
+  setPage,
+  searchParams,
+  setSearchParams,
+}) => {
+  const handlePageChange = (pageNumber: number) => {
+    setPage(pageNumber);
+    searchParams.set("page", String(pageNumber));
+    setSearchParams(searchParams);
+  };
 
   const handlePrevClick = () => {
     if (page > 1) handlePageChange(page - 1);

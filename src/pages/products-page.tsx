@@ -4,11 +4,11 @@ import { useSearchParams } from "react-router";
 import { Pagination } from "../components/pagination";
 
 export const ProductsPage: FC = () => {
-  const ITEMS_PER_PAGE = 10;
+  const ITEMS_PER_PAGE = 8;
   const [searchParams, setSearchParams] = useSearchParams();
   const { data } = useProducts();
   let products = data?.data.products;
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(Number(searchParams.get("page") ?? 1));
 
   if (!products)
     return <main className="flex items-center justify-center">lodaing...</main>;
@@ -38,11 +38,14 @@ export const ProductsPage: FC = () => {
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchParams(prevParams => {
+      prevParams.set("page", "1");
+
       if (value) prevParams.set("search", value);
       else prevParams.delete("search");
 
       return prevParams;
     });
+    if (page !== 1) setPage(1);
   };
 
   const handleSort = () => {
@@ -75,7 +78,13 @@ export const ProductsPage: FC = () => {
         </li>
       ))}
 
-      <Pagination page={page} setPage={setPage} pageCount={pageCount} />
+      <Pagination
+        page={page}
+        setPage={setPage}
+        pageCount={pageCount}
+        searchParams={searchParams}
+        setSearchParams={setSearchParams}
+      />
     </main>
   );
 };
