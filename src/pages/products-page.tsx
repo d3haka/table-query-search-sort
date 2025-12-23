@@ -2,8 +2,8 @@ import { useState, type FC } from "react";
 import { useProducts } from "../queries/product";
 import { useSearchParams } from "react-router";
 import { Pagination } from "../components/pagination";
-import downArrow from "../assets/down-arrow.svg";
 import { twMerge } from "tailwind-merge";
+import { SortArrow } from "../components/sort-arrow";
 
 export const ProductsPage: FC = () => {
   const ITEMS_PER_PAGE = 8;
@@ -98,46 +98,19 @@ export const ProductsPage: FC = () => {
               <th onClick={() => handleSort("weight")}>
                 <div className="flex items-center justify-center">
                   وزن
-                  {searchParams.get("weight") && (
-                    <img
-                      src={downArrow}
-                      className={twMerge(
-                        "size-4",
-                        searchParams.get("weight") === "asc" && "rotate-180",
-                      )}
-                      alt=""
-                    />
-                  )}
+                  <SortArrow column="weight" searchParams={searchParams} />
                 </div>
               </th>
               <th onClick={() => handleSort("price")}>
                 <div className="flex items-center justify-center">
                   قیمت
-                  {searchParams.get("price") && (
-                    <img
-                      src={downArrow}
-                      className={twMerge(
-                        "size-4",
-                        searchParams.get("price") === "asc" && "rotate-180",
-                      )}
-                      alt=""
-                    />
-                  )}
+                  <SortArrow column="price" searchParams={searchParams} />
                 </div>
               </th>
               <th onClick={() => handleSort("id")}>
                 <div className="flex items-center justify-center">
                   ای‌دی
-                  {searchParams.get("id") && (
-                    <img
-                      src={downArrow}
-                      className={twMerge(
-                        "size-4",
-                        searchParams.get("id") === "asc" && "rotate-180",
-                      )}
-                      alt=""
-                    />
-                  )}
+                  <SortArrow column="id" searchParams={searchParams} />
                 </div>
               </th>
               <th>اسم</th>
@@ -145,13 +118,7 @@ export const ProductsPage: FC = () => {
           </thead>
           <tbody>
             {products.map((p, idx) => (
-              <tr
-                className={twMerge(
-                  idx === 0 && "rounded-t-lg",
-                  idx % 2 === 0 && "bg-gray-200",
-                )}
-                key={p.id}
-              >
+              <tr className={twMerge(idx % 2 === 0 && "bg-gray-200")} key={p.id}>
                 <td>{p.weight}</td>
                 <td>{p.price}</td>
                 <td>{p.id}</td>
