@@ -2,6 +2,8 @@ import { useState, type FC } from "react";
 import { useProducts } from "../queries/product";
 import { useSearchParams } from "react-router";
 import { Pagination } from "../components/pagination";
+import downArrow from "../assets/down-arrow.svg";
+import { twMerge } from "tailwind-merge";
 
 export const ProductsPage: FC = () => {
   const ITEMS_PER_PAGE = 8;
@@ -21,11 +23,25 @@ export const ProductsPage: FC = () => {
   }
 
   //price sorting
-  const priceQueryParam = searchParams.get("price");
+  let priceQueryParam = searchParams.get("price");
   if (priceQueryParam === "asc") {
     products = products.sort((a, b) => a.price - b.price);
   } else if (priceQueryParam === "desc") {
     products = products.sort((a, b) => b.price - a.price);
+  }
+  //weight sorting
+  priceQueryParam = searchParams.get("weight");
+  if (priceQueryParam === "asc") {
+    products = products.sort((a, b) => a.weight - b.weight);
+  } else if (priceQueryParam === "desc") {
+    products = products.sort((a, b) => b.weight - a.weight);
+  }
+  //id sorting
+  priceQueryParam = searchParams.get("id");
+  if (priceQueryParam === "asc") {
+    products = products.sort((a, b) => a.id - b.id);
+  } else if (priceQueryParam === "desc") {
+    products = products.sort((a, b) => b.id - a.id);
   }
 
   const pageCount = Math.max(Math.ceil(products.length / ITEMS_PER_PAGE), 1);
@@ -48,35 +64,103 @@ export const ProductsPage: FC = () => {
     if (page !== 1) setPage(1);
   };
 
-  const handleSort = () => {
+  const handleSort = (coloum: "price" | "weight" | "id") => {
     setSearchParams(prevParams => {
-      const priceQueryParam = searchParams.get("price");
-      if (priceQueryParam === null || priceQueryParam === "desc")
-        prevParams.set("price", "asc");
-      else if (prevParams.get("price") === "asc") prevParams.set("price", "desc");
+      if (coloum !== "price") prevParams.delete("price");
+      if (coloum !== "weight") prevParams.delete("weight");
+      if (coloum !== "id") prevParams.delete("id");
+
+      const quryVal = prevParams.get(coloum);
+      if (quryVal === null || quryVal === "desc") prevParams.set(coloum, "asc");
+      else if (quryVal === "asc") prevParams.set(coloum, "desc");
 
       return prevParams;
     });
   };
 
   return (
-    <main className="">
-      <input
-        type="text"
-        value={searchParams.get("search") || ""}
-        onChange={handleSearchChange}
-        placeholder="Search..."
-        className="m-2 border p-1.5"
-      />
-      <button className="ml-4 border" onClick={handleSort}>
-        sort
-      </button>
+    <main className="flex h-screen w-screen flex-col items-center gap-2.5 px-52 pt-6">
+      <div className="flex w-full items-center justify-between">
+        <input
+          type="text"
+          value={searchParams.get("search") || ""}
+          onChange={handleSearchChange}
+          placeholder="Search..."
+          className="rounded-md border p-1.5"
+        />
+        <p className="text-2xl font-bold">محصولات</p>
+      </div>
 
-      {products.map(p => (
-        <li key={p.id}>
-          {p.title}---{p.price}
-        </li>
-      ))}
+      <div className="min-h-56.25 w-full rounded-lg border">
+        <table className="w-full text-center">
+          <thead>
+            <tr className="font-bold">
+              <th onClick={() => handleSort("weight")}>
+                <div className="flex items-center justify-center">
+                  وزن
+                  {searchParams.get("weight") && (
+                    <img
+                      src={downArrow}
+                      className={twMerge(
+                        "size-4",
+                        searchParams.get("weight") === "asc" && "rotate-180",
+                      )}
+                      alt=""
+                    />
+                  )}
+                </div>
+              </th>
+              <th onClick={() => handleSort("price")}>
+                <div className="flex items-center justify-center">
+                  قیمت
+                  {searchParams.get("price") && (
+                    <img
+                      src={downArrow}
+                      className={twMerge(
+                        "size-4",
+                        searchParams.get("price") === "asc" && "rotate-180",
+                      )}
+                      alt=""
+                    />
+                  )}
+                </div>
+              </th>
+              <th onClick={() => handleSort("id")}>
+                <div className="flex items-center justify-center">
+                  ای‌دی
+                  {searchParams.get("id") && (
+                    <img
+                      src={downArrow}
+                      className={twMerge(
+                        "size-4",
+                        searchParams.get("id") === "asc" && "rotate-180",
+                      )}
+                      alt=""
+                    />
+                  )}
+                </div>
+              </th>
+              <th>اسم</th>
+            </tr>
+          </thead>
+          <tbody>
+            {products.map((p, idx) => (
+              <tr
+                className={twMerge(
+                  idx === 0 && "rounded-t-lg",
+                  idx % 2 === 0 && "bg-gray-200",
+                )}
+                key={p.id}
+              >
+                <td>{p.weight}</td>
+                <td>{p.price}</td>
+                <td>{p.id}</td>
+                <td>{p.title}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       <Pagination
         page={page}
