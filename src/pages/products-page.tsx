@@ -13,12 +13,14 @@ export const ProductsPage: FC = () => {
   if (!products)
     return <main className="flex items-center justify-center">lodaing...</main>;
 
+  //search filtering
   if (searchParams.get("search")) {
     products = products.filter(p =>
       p.title.toLowerCase().includes(searchParams.get("search")!.toLowerCase()),
     );
   }
 
+  //price sorting
   const priceQueryParam = searchParams.get("price");
   if (priceQueryParam === "asc") {
     products = products.sort((a, b) => a.price - b.price);
@@ -26,8 +28,8 @@ export const ProductsPage: FC = () => {
     products = products.sort((a, b) => b.price - a.price);
   }
 
-  let pageCount = Math.ceil(products.length / ITEMS_PER_PAGE);
-  if (pageCount < 1) pageCount = 1;
+  const pageCount = Math.max(Math.ceil(products.length / ITEMS_PER_PAGE), 1);
+  //pagination filtering
   products = products.filter((_, idx) => {
     if (idx >= (page - 1) * ITEMS_PER_PAGE && idx < page * ITEMS_PER_PAGE) return true;
     return false;
