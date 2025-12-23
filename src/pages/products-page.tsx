@@ -23,25 +23,19 @@ export const ProductsPage: FC = () => {
   }
 
   //price sorting
-  let priceQueryParam = searchParams.get("price");
-  if (priceQueryParam === "asc") {
+  if (searchParams.has("price")) {
     products = products.sort((a, b) => a.price - b.price);
-  } else if (priceQueryParam === "desc") {
-    products = products.sort((a, b) => b.price - a.price);
+    if (searchParams.get("price") === "desc") products.reverse();
   }
   //weight sorting
-  priceQueryParam = searchParams.get("weight");
-  if (priceQueryParam === "asc") {
+  if (searchParams.has("weight")) {
     products = products.sort((a, b) => a.weight - b.weight);
-  } else if (priceQueryParam === "desc") {
-    products = products.sort((a, b) => b.weight - a.weight);
+    if (searchParams.get("weight") === "desc") products.reverse();
   }
   //id sorting
-  priceQueryParam = searchParams.get("id");
-  if (priceQueryParam === "asc") {
+  if (searchParams.has("id")) {
     products = products.sort((a, b) => a.id - b.id);
-  } else if (priceQueryParam === "desc") {
-    products = products.sort((a, b) => b.id - a.id);
+    if (searchParams.get("id") === "desc") products.reverse();
   }
 
   const pageCount = Math.max(Math.ceil(products.length / ITEMS_PER_PAGE), 1);
