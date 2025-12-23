@@ -1,5 +1,7 @@
 import { type Dispatch, type SetStateAction, type FC } from "react";
 import type { SetURLSearchParams } from "react-router";
+import { twMerge } from "tailwind-merge";
+import next from "../assets/next-arrow.svg";
 
 interface PaginationProps {
   page: number;
@@ -37,18 +39,19 @@ export const Pagination: FC<PaginationProps> = ({
           <button
             onClick={handlePrevClick}
             disabled={page === 1}
-            className="rounded border px-3 py-1 disabled:opacity-50"
+            className="flex size-8 cursor-pointer items-center justify-center rounded border disabled:opacity-50"
           >
-            Prev
+            <img src={next} alt="" className="size-4 rotate-180" />
           </button>
         </li>
         {Array.from({ length: pageCount }, (_, i) => (
           <li key={i}>
             <button
               onClick={() => handlePageChange(i + 1)}
-              className={`rounded border px-3 py-1 ${
-                page === i + 1 ? "bg-blue-500 text-white" : ""
-              }`}
+              className={twMerge(
+                "size-8 cursor-pointer rounded border",
+                page === i + 1 && "bg-slate-400 text-white",
+              )}
             >
               {i + 1}
             </button>
@@ -58,9 +61,9 @@ export const Pagination: FC<PaginationProps> = ({
           <button
             onClick={handleNextClick}
             disabled={page === pageCount}
-            className="rounded border px-3 py-1 disabled:opacity-50"
+            className="flex size-8 cursor-pointer items-center justify-center rounded border disabled:opacity-50"
           >
-            Next
+            <img src={next} alt="" className="size-4" />
           </button>
         </li>
       </ul>

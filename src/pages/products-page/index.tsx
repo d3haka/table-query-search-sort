@@ -1,9 +1,9 @@
 import { useState, type FC } from "react";
-import { useProducts } from "../queries/product";
 import { useSearchParams } from "react-router";
-import { Pagination } from "../components/pagination";
 import { twMerge } from "tailwind-merge";
-import { SortArrow } from "../components/sort-arrow";
+import { useProducts } from "../../queries/product";
+import { SortArrow } from "./sort-arrow";
+import { Pagination } from "../../components/pagination";
 
 export const ProductsPage: FC = () => {
   const ITEMS_PER_PAGE = 8;
@@ -13,7 +13,9 @@ export const ProductsPage: FC = () => {
   const [page, setPage] = useState(Number(searchParams.get("page") ?? 1));
 
   if (!products)
-    return <main className="flex items-center justify-center">lodaing...</main>;
+    return (
+      <main className="flex h-screen w-screen items-center justify-center">lodaing...</main>
+    );
 
   //search filtering
   if (searchParams.get("search")) {
@@ -80,30 +82,30 @@ export const ProductsPage: FC = () => {
           value={searchParams.get("search") || ""}
           onChange={handleSearchChange}
           placeholder="Search..."
-          className="rounded-md border p-1.5"
+          className="rounded border p-1.5"
         />
         <p className="text-2xl font-bold">محصولات</p>
       </div>
 
-      <div className="min-h-56.25 w-full rounded-lg border">
+      <div className="min-h-56.25 w-full rounded border">
         <table className="w-full text-center">
           <thead>
             <tr className="font-bold">
               <th onClick={() => handleSort("weight")}>
-                <div className="flex items-center justify-center">
-                  وزن
+                <div className="flex cursor-pointer items-center justify-center hover:bg-slate-200">
+                  <span className="pr-1">وزن</span>
                   <SortArrow column="weight" searchParams={searchParams} />
                 </div>
               </th>
               <th onClick={() => handleSort("price")}>
-                <div className="flex items-center justify-center">
-                  قیمت
+                <div className="flex cursor-pointer items-center justify-center hover:bg-slate-200">
+                  <span className="pr-1">قیمت</span>
                   <SortArrow column="price" searchParams={searchParams} />
                 </div>
               </th>
               <th onClick={() => handleSort("id")}>
-                <div className="flex items-center justify-center">
-                  ای‌دی
+                <div className="flex cursor-pointer items-center justify-center hover:bg-slate-200">
+                  <span className="pr-1">ای‌دی</span>
                   <SortArrow column="id" searchParams={searchParams} />
                 </div>
               </th>
@@ -112,11 +114,11 @@ export const ProductsPage: FC = () => {
           </thead>
           <tbody>
             {products.map((p, idx) => (
-              <tr className={twMerge(idx % 2 === 0 && "bg-gray-200")} key={p.id}>
-                <td>{p.weight}</td>
-                <td>{p.price}</td>
-                <td>{p.id}</td>
-                <td>{p.title}</td>
+              <tr className={twMerge(idx % 2 === 0 && "bg-slate-200")} key={p.id}>
+                <td className="w-1/5">{p.weight}</td>
+                <td className="w-1/5">{p.price}</td>
+                <td className="w-1/5">{p.id}</td>
+                <td className="w-2/5">{p.title}</td>
               </tr>
             ))}
           </tbody>
