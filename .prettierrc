@@ -1,4 +1,5 @@
 {
-    "printWidth":92,
-    "plugins": ["prettier-plugin-tailwindcss"]
+  "printWidth": 92,
+  "arrowParens": "avoid",
+  "plugins": ["prettier-plugin-tailwindcss"]
 }
