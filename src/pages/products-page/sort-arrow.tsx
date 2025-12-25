@@ -1,9 +1,10 @@
 import type { FC } from "react";
 import { twMerge } from "tailwind-merge";
 import downArrow from "../../assets/down-arrow.svg";
+import type { SortColumns } from ".";
 
 type SortArrowProps = {
-  column: "price" | "weight" | "id";
+  column: SortColumns;
   searchParams: URLSearchParams;
 };
 

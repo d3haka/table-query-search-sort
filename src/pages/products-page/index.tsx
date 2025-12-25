@@ -5,6 +5,13 @@ import { useProducts } from "../../queries/product";
 import { SortArrow } from "./sort-arrow";
 import { Pagination } from "../../components/pagination";
 
+const sortColumns = {
+  price: "price",
+  weight: "weight",
+  id: "id",
+} as const;
+export type SortColumns = (typeof sortColumns)[keyof typeof sortColumns];
+
 export const ProductsPage: FC = () => {
   const ITEMS_PER_PAGE = 8;
   const { data } = useProducts();
@@ -29,13 +36,13 @@ export const ProductsPage: FC = () => {
       column = query.split("-")[0],
       type = query.split("-")[1];
 
-    if (column === "price") {
+    if (column === sortColumns.price) {
       products = products.sort((a, b) => a.price - b.price);
       if (type === "desc") products.reverse();
-    } else if (column === "weight") {
+    } else if (column === sortColumns.weight) {
       products = products.sort((a, b) => a.weight - b.weight);
       if (type === "desc") products.reverse();
-    } else if (column === "id") {
+    } else if (column === sortColumns.id) {
       products = products.sort((a, b) => a.id - b.id);
       if (type === "desc") products.reverse();
     }
@@ -59,14 +66,14 @@ export const ProductsPage: FC = () => {
     });
   };
 
-  const handleSortQuery = (coloum: "price" | "weight" | "id") => {
+  const handleSortQuery = (column: SortColumns) => {
     setSearchParams(prevParams => {
       const query = prevParams.get("sort") ?? "",
         queryCol = query.split("-")[0],
         type = query.split("-")[1];
 
-      if (queryCol === coloum && type === "asc") prevParams.set("sort", `${coloum}-desc`);
-      else prevParams.set("sort", `${coloum}-asc`);
+      if (queryCol === column && type === "asc") prevParams.set("sort", `${column}-desc`);
+      else prevParams.set("sort", `${column}-asc`);
 
       return prevParams;
     });
@@ -77,7 +84,7 @@ export const ProductsPage: FC = () => {
       <div className="flex w-full items-center justify-between">
         <input
           type="text"
-          value={searchParams.get("search") || ""}
+          value={searchParams.get("search") ?? ""}
           onChange={handleSearchQuery}
           placeholder="Search..."
           className="rounded border p-1.5"
