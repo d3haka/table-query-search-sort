@@ -47,7 +47,7 @@ export const ProductsPage: FC = () => {
     return false;
   });
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearchQuery = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchParams(prevParams => {
       prevParams.set("page", "1");
@@ -60,7 +60,7 @@ export const ProductsPage: FC = () => {
     if (page !== 1) setPage(1);
   };
 
-  const handleSort = (coloum: "price" | "weight" | "id") => {
+  const handleSortQuery = (coloum: "price" | "weight" | "id") => {
     setSearchParams(prevParams => {
       if (coloum !== "price") prevParams.delete("price");
       if (coloum !== "weight") prevParams.delete("weight");
@@ -80,7 +80,7 @@ export const ProductsPage: FC = () => {
         <input
           type="text"
           value={searchParams.get("search") || ""}
-          onChange={handleSearchChange}
+          onChange={handleSearchQuery}
           placeholder="Search..."
           className="rounded border p-1.5"
         />
@@ -91,19 +91,19 @@ export const ProductsPage: FC = () => {
         <table className="w-full text-center">
           <thead>
             <tr className="font-bold">
-              <th onClick={() => handleSort("weight")}>
+              <th onClick={() => handleSortQuery("weight")}>
                 <div className="flex cursor-pointer items-center justify-center hover:bg-slate-200">
                   <span className="pr-1">وزن</span>
                   <SortArrow column="weight" searchParams={searchParams} />
                 </div>
               </th>
-              <th onClick={() => handleSort("price")}>
+              <th onClick={() => handleSortQuery("price")}>
                 <div className="flex cursor-pointer items-center justify-center hover:bg-slate-200">
                   <span className="pr-1">قیمت</span>
                   <SortArrow column="price" searchParams={searchParams} />
                 </div>
               </th>
-              <th onClick={() => handleSort("id")}>
+              <th onClick={() => handleSortQuery("id")}>
                 <div className="flex cursor-pointer items-center justify-center hover:bg-slate-200">
                   <span className="pr-1">ای‌دی</span>
                   <SortArrow column="id" searchParams={searchParams} />
@@ -125,13 +125,7 @@ export const ProductsPage: FC = () => {
         </table>
       </div>
 
-      <Pagination
-        page={page}
-        setPage={setPage}
-        pageCount={pageCount}
-        searchParams={searchParams}
-        setSearchParams={setSearchParams}
-      />
+      <Pagination page={page} setPage={setPage} pageCount={pageCount} />
     </main>
   );
 };

@@ -1,5 +1,5 @@
 import { type Dispatch, type SetStateAction, type FC } from "react";
-import type { SetURLSearchParams } from "react-router";
+import { useSearchParams } from "react-router";
 import { twMerge } from "tailwind-merge";
 import next from "../assets/next-arrow.svg";
 
@@ -7,17 +7,11 @@ interface PaginationProps {
   page: number;
   pageCount: number;
   setPage: Dispatch<SetStateAction<number>>;
-  searchParams: URLSearchParams;
-  setSearchParams: SetURLSearchParams;
 }
 
-export const Pagination: FC<PaginationProps> = ({
-  page,
-  pageCount,
-  setPage,
-  searchParams,
-  setSearchParams,
-}) => {
+export const Pagination: FC<PaginationProps> = ({ page, pageCount, setPage }) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const handlePageChange = (pageNumber: number) => {
     setPage(pageNumber);
     searchParams.set("page", String(pageNumber));
