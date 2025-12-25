@@ -7,39 +7,41 @@ import { Pagination } from "../../components/pagination";
 
 export const ProductsPage: FC = () => {
   const ITEMS_PER_PAGE = 8;
-  const [searchParams, setSearchParams] = useSearchParams();
   const { data } = useProducts();
   let products = data?.data.products;
-  const page = Number(searchParams.get("page") ?? 1);
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const page = Number(searchParams.get("page") ?? "1");
 
   if (!products)
     return (
       <main className="flex h-screen w-screen items-center justify-center">lodaing...</main>
     );
 
-  if (searchParams.get("search")) {
-    //search filtering
+  if (searchParams.has("search")) {
     products = products.filter(p =>
       p.title.toLowerCase().includes(searchParams.get("search")!.toLowerCase()),
     );
   }
 
-  if (searchParams.has("price")) {
-    //price sorting
-    products = products.sort((a, b) => a.price - b.price);
-    if (searchParams.get("price") === "desc") products.reverse();
-  } else if (searchParams.has("weight")) {
-    //weight sorting
-    products = products.sort((a, b) => a.weight - b.weight);
-    if (searchParams.get("weight") === "desc") products.reverse();
-  } else if (searchParams.has("id")) {
-    //id sorting
-    products = products.sort((a, b) => a.id - b.id);
-    if (searchParams.get("id") === "desc") products.reverse();
+  if (searchParams.has("sort")) {
+    const query = searchParams.get("sort") ?? "",
+      column = query.split("-")[0],
+      type = query.split("-")[1];
+
+    if (column === "price") {
+      products = products.sort((a, b) => a.price - b.price);
+      if (type === "desc") products.reverse();
+    } else if (column === "weight") {
+      products = products.sort((a, b) => a.weight - b.weight);
+      if (type === "desc") products.reverse();
+    } else if (column === "id") {
+      products = products.sort((a, b) => a.id - b.id);
+      if (type === "desc") products.reverse();
+    }
   }
 
   const pageCount = Math.max(Math.ceil(products.length / ITEMS_PER_PAGE), 1);
-  //pagination filtering
   products = products.filter((_, idx) => {
     if (idx >= (page - 1) * ITEMS_PER_PAGE && idx < page * ITEMS_PER_PAGE) return true;
     return false;
@@ -59,13 +61,12 @@ export const ProductsPage: FC = () => {
 
   const handleSortQuery = (coloum: "price" | "weight" | "id") => {
     setSearchParams(prevParams => {
-      if (coloum !== "price") prevParams.delete("price");
-      if (coloum !== "weight") prevParams.delete("weight");
-      if (coloum !== "id") prevParams.delete("id");
+      const query = prevParams.get("sort") ?? "",
+        queryCol = query.split("-")[0],
+        type = query.split("-")[1];
 
-      const quryVal = prevParams.get(coloum);
-      if (quryVal === null || quryVal === "desc") prevParams.set(coloum, "asc");
-      else if (quryVal === "asc") prevParams.set(coloum, "desc");
+      if (queryCol === coloum && type === "asc") prevParams.set("sort", `${coloum}-desc`);
+      else prevParams.set("sort", `${coloum}-asc`);
 
       return prevParams;
     });

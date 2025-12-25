@@ -8,12 +8,16 @@ type SortArrowProps = {
 };
 
 export const SortArrow: FC<SortArrowProps> = ({ column, searchParams }) => {
-  if (!searchParams.get(column)) return;
+  const query = searchParams.get("sort") ?? "",
+    queryCol = query.split("-")[0],
+    type = query.split("-")[1];
+
+  if (queryCol !== column) return;
 
   return (
     <img
       src={downArrow}
-      className={twMerge("size-4", searchParams.get(column) === "asc" && "rotate-180")}
+      className={twMerge("size-4", type === "asc" && "rotate-180")}
       alt=""
     />
   );
