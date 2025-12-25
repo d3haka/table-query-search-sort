@@ -1,4 +1,4 @@
-import { useState, type FC } from "react";
+import { type FC } from "react";
 import { useSearchParams } from "react-router";
 import { twMerge } from "tailwind-merge";
 import { useProducts } from "../../queries/product";
@@ -10,32 +10,30 @@ export const ProductsPage: FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { data } = useProducts();
   let products = data?.data.products;
-  const [page, setPage] = useState(Number(searchParams.get("page") ?? 1));
+  const page = Number(searchParams.get("page") ?? 1);
 
   if (!products)
     return (
       <main className="flex h-screen w-screen items-center justify-center">lodaing...</main>
     );
 
-  //search filtering
   if (searchParams.get("search")) {
+    //search filtering
     products = products.filter(p =>
       p.title.toLowerCase().includes(searchParams.get("search")!.toLowerCase()),
     );
   }
 
-  //price sorting
   if (searchParams.has("price")) {
+    //price sorting
     products = products.sort((a, b) => a.price - b.price);
     if (searchParams.get("price") === "desc") products.reverse();
-  }
-  //weight sorting
-  if (searchParams.has("weight")) {
+  } else if (searchParams.has("weight")) {
+    //weight sorting
     products = products.sort((a, b) => a.weight - b.weight);
     if (searchParams.get("weight") === "desc") products.reverse();
-  }
-  //id sorting
-  if (searchParams.has("id")) {
+  } else if (searchParams.has("id")) {
+    //id sorting
     products = products.sort((a, b) => a.id - b.id);
     if (searchParams.get("id") === "desc") products.reverse();
   }
@@ -57,7 +55,6 @@ export const ProductsPage: FC = () => {
 
       return prevParams;
     });
-    if (page !== 1) setPage(1);
   };
 
   const handleSortQuery = (coloum: "price" | "weight" | "id") => {
@@ -87,24 +84,24 @@ export const ProductsPage: FC = () => {
         <p className="text-2xl font-bold">محصولات</p>
       </div>
 
-      <div className="min-h-56.25 w-full rounded border">
+      <div className="min-h-108 w-full rounded border">
         <table className="w-full text-center">
           <thead>
             <tr className="font-bold">
               <th onClick={() => handleSortQuery("weight")}>
-                <div className="flex cursor-pointer items-center justify-center hover:bg-slate-200">
+                <div className="flex h-10 cursor-pointer items-center justify-center hover:bg-slate-200">
                   <span className="pr-1">وزن</span>
                   <SortArrow column="weight" searchParams={searchParams} />
                 </div>
               </th>
               <th onClick={() => handleSortQuery("price")}>
-                <div className="flex cursor-pointer items-center justify-center hover:bg-slate-200">
+                <div className="flex h-10 cursor-pointer items-center justify-center hover:bg-slate-200">
                   <span className="pr-1">قیمت</span>
                   <SortArrow column="price" searchParams={searchParams} />
                 </div>
               </th>
               <th onClick={() => handleSortQuery("id")}>
-                <div className="flex cursor-pointer items-center justify-center hover:bg-slate-200">
+                <div className="flex h-10 cursor-pointer items-center justify-center hover:bg-slate-200">
                   <span className="pr-1">ای‌دی</span>
                   <SortArrow column="id" searchParams={searchParams} />
                 </div>
@@ -115,17 +112,27 @@ export const ProductsPage: FC = () => {
           <tbody>
             {products.map((p, idx) => (
               <tr className={twMerge(idx % 2 === 0 && "bg-slate-200")} key={p.id}>
-                <td className="w-1/5">{p.weight}</td>
-                <td className="w-1/5">{p.price}</td>
-                <td className="w-1/5">{p.id}</td>
-                <td className="w-2/5">{p.title}</td>
+                <td className="w-1/5">
+                  <div className="flex min-h-12 items-center justify-center">
+                    {p.weight}
+                  </div>
+                </td>
+                <td className="w-1/5">
+                  <div className="flex min-h-12 items-center justify-center">{p.price}</div>
+                </td>
+                <td className="w-1/5">
+                  <div className="flex min-h-12 items-center justify-center">{p.id}</div>
+                </td>
+                <td className="w-2/5">
+                  <div className="flex min-h-12 items-center justify-center">{p.title}</div>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
 
-      <Pagination page={page} setPage={setPage} pageCount={pageCount} />
+      <Pagination pageCount={pageCount} />
     </main>
   );
 };
