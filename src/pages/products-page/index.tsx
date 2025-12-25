@@ -15,15 +15,10 @@ export type SortColumns = (typeof sortColumns)[keyof typeof sortColumns];
 export const ProductsPage: FC = () => {
   const ITEMS_PER_PAGE = 8;
   const { data } = useProducts();
-  let products = data?.data.products;
+  let products = data.data.products;
 
   const [searchParams, setSearchParams] = useSearchParams();
   const page = Number(searchParams.get("page") ?? "1");
-
-  if (!products)
-    return (
-      <main className="flex h-screen w-screen items-center justify-center">lodaing...</main>
-    );
 
   if (searchParams.has("search")) {
     products = products.filter(p =>

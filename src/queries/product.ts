@@ -1,4 +1,4 @@
-import { useQuery, type UseQueryOptions } from "@tanstack/react-query";
+import { useSuspenseQuery, type UseQueryOptions } from "@tanstack/react-query";
 import { getProducts } from "../api/product";
 
 export const useProducts = (
@@ -7,7 +7,7 @@ export const useProducts = (
     "queryKey" | "queryFn"
   >,
 ) =>
-  useQuery({
+  useSuspenseQuery({
     queryKey: ["products"],
     queryFn: getProducts,
     ...options,
